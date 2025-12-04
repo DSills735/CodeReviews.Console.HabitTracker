@@ -16,7 +16,7 @@ namespace habitTracker
                 connection.Open();
                 var tableCommand = connection.CreateCommand();
                 tableCommand.CommandText = @"CREATE TABLE IF NOT EXISTS Coding(
-                                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                                             Date TEXT,
                                             Quantity INTEGER
                                             )";
@@ -86,10 +86,10 @@ namespace habitTracker
                         tableData.Add(
                         new CodingHours
                         {
-                            id=reader.GetInt32(0),
-                            date = DateTime.ParseExact(reader.GetString(1), "mm-dd-yy", new CultureInfo("en-US")),
+                            Id=reader.GetInt32(0),
+                            Date = DateTime.ParseExact(reader.GetString(1), "mm-dd-yy", new CultureInfo("en-US")),
                             Quantity = reader.GetInt32(2)
-                        }); ;
+                            });;
                     }
                 }
                 else
@@ -102,7 +102,7 @@ namespace habitTracker
 
                 foreach (var ch in tableData)
                 {
-                    Console.WriteLine($"{ch.id} - {ch.date.ToString("mm-dd-yy")} - Hours: {ch.Quantity}");
+                    Console.WriteLine($"{ch.Id} - {ch.Date.ToString("mm-dd-yy")} - Hours: {ch.Quantity}");
                 }
 
                 Console.WriteLine("---------------------------------------------------------\n");
@@ -170,8 +170,8 @@ namespace habitTracker
         {
             Console.Clear();
             ViewRecords();
-            var recordID = GetNumberInput("Please type the ID of the record you would like to delete, or 0 (zero) to return to the main menu.");
-            if(recordID <= 0)
+            var recordid = GetNumberInput("Please type the id of the record you would like to delete, or 0 (zero) to return to the main menu.");
+            if(recordid <= 0)
             {
                 GetUserInput();
             }
@@ -179,16 +179,16 @@ namespace habitTracker
             {
                 connection.Open();
                 var tableCommand = connection.CreateCommand();
-                tableCommand.CommandText = $"DELETE from Coding WHERE ID = '{recordID}'";
+                tableCommand.CommandText = $"DELETE from Coding WHERE id = '{recordid}'";
 
                 int rowCount = tableCommand.ExecuteNonQuery();
 
                 if(rowCount == 0)
                 {
-                    Console.WriteLine($"Record with id: {recordID} does not exist.");
+                    Console.WriteLine($"Record with id: {recordid} does not exist.");
                     DeleteRecord();
                 }
-                Console.WriteLine($"Record {recordID} was deleted.");
+                Console.WriteLine($"Record {recordid} was deleted.");
 
                 connection.Close();
 
@@ -201,19 +201,19 @@ namespace habitTracker
             Console.Clear();
             ViewRecords();
 
-            var recordID = GetNumberInput("Please type the ID of the record to update. Press 0 (zero) to return to the main menu.");
+            var recordid = GetNumberInput("Please type the id of the record to update. Press 0 (zero) to return to the main menu.");
 
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
-                tableCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM Coding WHERE Id = '{recordID}')";
+                tableCmd.CommandText = $"SELECT EXISTS(SELECT 1 FROM Coding WHERE id = '{recordid}')";
 
                 int query = Convert.ToInt32(tableCmd.ExecuteScalar());
 
                 if(query == 0)
                 {
-                    Console.WriteLine($"Record ID {recordID} does not exist.");
+                    Console.WriteLine($"Record id {recordid} does not exist.");
                     connection.Close();
                     UpdateRecord();
                 }
@@ -222,7 +222,7 @@ namespace habitTracker
                 int quantity = GetNumberInput("Please type how many hours you have coded today.");
 
                 var tableCommand = connection.CreateCommand();
-                tableCommand.CommandText = $"UPDATE Coding SET date = '{date}', Quantity = '{quantity}' WHERE Id = '{recordID}'";
+                tableCommand.CommandText = $"UPDATE Coding SET date = '{date}', Quantity = '{quantity}' WHERE id = '{recordid}'";
                 tableCommand.ExecuteNonQuery();
                 connection.Close();
 
@@ -233,9 +233,9 @@ namespace habitTracker
     
     public class CodingHours
     {
-        public int id { get; set;}
+        public int Id { get; set;}
 
-        public DateTime date{ get; set;}
+        public DateTime Date{ get; set;}
 
         public int Quantity {get; set;}
     }
